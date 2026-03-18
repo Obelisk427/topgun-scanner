@@ -1,14 +1,16 @@
 name: Top Gun Bracket Scanner
 
 on:
-  schedule:
-    # This string of characters is cron syntax for "Every 5 minutes"
-    - cron: '*/5 * * * *'
-  workflow_dispatch: # This allows you to click a button to run it manually right now
+  workflow_dispatch: # This is how cron-job.org triggers the run
 
 jobs:
   scan:
     runs-on: ubuntu-latest
+    
+    # This gives the bot permission to save the memory file
+    permissions:
+      contents: write 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,6 +27,12 @@ jobs:
 
       - name: Run scanner script
         env:
-          # This securely pulls your hidden webhook out of the vault
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python scanner.py
+
+      - name: Save memory file if schedule was found
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add schedule_found.txt || true
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Bot: Schedule found, saving memory marker" && git push)

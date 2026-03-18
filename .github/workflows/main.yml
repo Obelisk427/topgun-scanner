@@ -2,8 +2,8 @@ name: Top Gun Bracket Scanner
 
 on:
   schedule:
-    # This weird string of characters is cron syntax for "Every 10 minutes"
-    - cron: '*/10 * * * *'
+    # This string of characters is cron syntax for "Every 5 minutes"
+    - cron: '*/5 * * * *'
   workflow_dispatch: # This allows you to click a button to run it manually right now
 
 jobs:

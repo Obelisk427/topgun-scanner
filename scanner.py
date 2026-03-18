@@ -4,11 +4,10 @@ import os
 import sys
 
 # --- CONFIGURATION ---
-URL = "https://playtopgunsports.com/UpcomingTournaments.aspx"  # Replace with the actual Top Gun page URL
-TOURNAMENT_NAME = "APPOMATTOX INAUGURAL (4)"  # Replace with your ACTUAL upcoming tournament!
-
-# This tells Python to look in GitHub's hidden secrets vault for your webhook
+URL = "https://playtopgunsports.com/UpcomingTournaments.aspx"
+TOURNAMENT_NAME = "APPOMATTOX INAUGURAL (4)"
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
+MEMORY_FILE = "schedule_found.txt"
 
 def send_discord_notification():
     """Sends a message to Discord when the schedule goes live."""
@@ -28,6 +27,12 @@ def send_discord_notification():
 
 def check_for_bracket():
     """Searches for the specific tournament and checks buttons for 'Schedule'."""
+    
+    # 1. Check if we already found the schedule in a past run
+    if os.path.exists(MEMORY_FILE):
+        print("Schedule already found previously. Skipping to prevent Discord spam.")
+        sys.exit(0)
+
     print(f"Checking for '{TOURNAMENT_NAME}' schedule...")
     try:
         response = requests.get(URL)
@@ -51,6 +56,11 @@ def check_for_bracket():
                 if schedule_found:
                     print("Schedule button found! Sending Discord alert...")
                     send_discord_notification()
+                    
+                    # 2. Leave a memory marker so we don't spam next time
+                    with open(MEMORY_FILE, "w") as f:
+                        f.write("Found it!")
+                    print("Memory marker saved.")
                     sys.exit(0)
                 else:
                     print("Tournament found, but couldn't detect a 'Schedule' button.")

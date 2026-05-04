@@ -5,7 +5,7 @@ import sys
 
 # --- CONFIGURATION ---
 URL = "https://playtopgunsports.com/UpcomingTournaments.aspx"
-TOURNAMENT_NAME = "APPOMATTOX INAUGURAL (4)"
+TOURNAMENT_NAME = "$99.00 MOTHERS DAY APPRECIAT"
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 MEMORY_FILE = "schedule_found.txt"
 
